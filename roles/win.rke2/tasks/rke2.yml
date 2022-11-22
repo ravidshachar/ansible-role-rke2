@@ -1,0 +1,39 @@
+- name: mkdir rke2
+  win_file:
+    path: C:\etc\rancher\rke2
+    state: directory
+
+- name: copy config
+  win_copy:
+    content: |
+      server: https://{{ hostvars[groups['masters'].0]['ansible_default_ipv4']['address'] }}:9345
+      token: ${{ rke2_token }}
+    dest: C:\etc\rancher\rke2\config.yaml
+
+- name: download rke2 install script
+  win_get_url:
+    url: https://raw.githubusercontent.com/rancher/rke2/master/install.ps1
+    dest: .\install.ps1
+
+- name: add bin to path
+  win_path:
+    elements:
+    - 'c:\var\lib\rancher\rke2\bin'
+    - 'c:\usr\local\bin'
+
+- name: Run install script
+  ansible.windows.win_powershell:
+    script: |
+      .\install.ps1 -Version 'v1.25.3+rke2r1' -Type agent
+
+- name: install agent
+  ansible.windows.win_powershell:
+    script: |
+      rke2.exe agent service --add
+  register: script_return
+
+- name: start rke2 service
+  win_service:
+    name: rke2
+    start_mode: auto
+    state: started

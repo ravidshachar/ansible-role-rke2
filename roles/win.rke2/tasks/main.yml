@@ -1,0 +1,12 @@
+- name: Ensure firewall is disabled
+  win_firewall:
+    state: disabled
+
+- name: install containers feature and docker
+  ansible.builtin.include_tasks: containers_and_docker.yml
+
+- name: install calico for windows and kube services (kubelet + kubeproxy)
+  ansible.builtin.include_tasks: calico.yml
+
+- name: download rke2 for windows and install agent
+  ansible.builtin.include_tasks: rke2.yml

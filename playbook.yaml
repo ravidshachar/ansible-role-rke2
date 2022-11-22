@@ -1,0 +1,17 @@
+---
+
+- name: Deploy RKE2
+  hosts: k8s_cluster
+  become: yes
+  vars:
+    rke2_cni: calico
+    rke2_token: defaultSecret12345
+  roles:
+    - role: lablabs.rke2
+
+- name: Deploy windows
+  hosts: windows
+  vars:
+    rke2_token: defaultSecret12345
+  roles:
+    - role: win.rke2

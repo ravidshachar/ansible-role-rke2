@@ -1,0 +1,46 @@
+- name: create C:k\ dir
+  win_file:
+    path: C:\k
+    state: directory
+
+- name: copy kubeconfig
+  win_copy:
+    src: /etc/rancher/rke2/rke2.yaml
+    dest: C:\k\config
+
+- name: replace ip in kubeconfig
+  win_lineinfile:
+    path: C:\k\config
+    regexp: '127.0.0.1'
+    line: "{{ hostvars[groups['masters'].0]['ansible_default_ipv4']['address'] }}"
+    backrefs: yes
+
+- name: download calico install script
+  win_get_url:
+    url: https://projectcalico.docs.tigera.io/scripts/install-calico-windows.ps1
+    dest: C:\install-calico-windows.ps1
+
+- name: install calico
+  ansible.windows.win_powershell:
+    script: |
+      C:\install-calico-windows.ps1 -KubeVersion 1.25.3 -ServiceCidr 10.42.0.0/16 -DNSServerIPs 10.42.0.10
+      C:\CalicoWindows\kubernetes\install-kube-services.ps1
+
+- name: fix kubelet start script
+  win_lineinfile:
+    path: C:\CalicoWindows\kubernetes\kubelet-service.ps1
+    regex: '.*{{ item }}.*'
+    state: absent
+  with_items:
+    - --cni-bin-dir=
+    - --cni-conf-dir=
+
+- name: start calico services
+  win_service:
+    name: "{{ item }}"
+    state: started
+  with_items:
+    - CalicoNode
+    - CalicoFelix
+    - kubelet
+    - kube-proxy
