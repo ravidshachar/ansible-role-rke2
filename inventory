@@ -1,0 +1,21 @@
+[masters]
+rke2-auto-cp01 ansible_connection=local rke2_type=server
+
+[workers]
+rke2-auto-lin01 rke2_type=agent
+
+[windows]
+rke2-auto-win01
+
+[windows:vars]
+ansible_connection=winrm
+ansible_winrm_transport=ntlm
+ansible_winrm_scheme=http
+ansible_winrm_port=5985
+ansible_user=domainadmin@domain.lab
+admin_user=domainadmin@domain.lab
+ansible_winrm_password=<password>
+
+[k8s_cluster:children]
+masters
+workers
