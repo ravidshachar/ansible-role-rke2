@@ -25,6 +25,8 @@
     script: |
       C:\install-calico-windows.ps1 -KubeVersion 1.25.3 -ServiceCidr 10.42.0.0/16 -DNSServerIPs 10.42.0.10
       C:\CalicoWindows\kubernetes\install-kube-services.ps1
+  async: 300
+  poll: 10
 
 - name: fix kubelet start script
   win_lineinfile:
