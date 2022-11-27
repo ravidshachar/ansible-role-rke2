@@ -7,8 +7,7 @@ resource "azurerm_resource_group" "resource_group" {
 # vnet 10.0.0.0/16 ->
 resource "azurerm_virtual_network" "vnet" {
   name = "${var.prefix}-vnet"
-  # Use this hack to get a unique vnet address space for every rg, should have a /16 address space 
-  address_space       = var.vnet_address_space
+  address_space       = [var.vnet_address_space]
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
 }
@@ -98,6 +97,12 @@ module "master_nodes" {
   admin_username = var.local_admin_username
   admin_password = var.local_admin_password
   is_windows     = false
+  source_image   = {
+        "publisher" = "canonical"
+        "offer"     = "0001-com-ubuntu-server-focal"
+        "sku"       = "20_04-lts"
+        "version"   = "latest"
+  }
 }
 
 module "lin_nodes" {
@@ -113,4 +118,10 @@ module "lin_nodes" {
   admin_username = var.local_admin_username
   admin_password = var.local_admin_password
   is_windows     = false
+  source_image   = {
+        "publisher" = "canonical"
+        "offer"     = "0001-com-ubuntu-server-focal"
+        "sku"       = "20_04-lts"
+        "version"   = "latest"
+  }
 }
