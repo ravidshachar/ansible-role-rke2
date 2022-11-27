@@ -23,7 +23,7 @@
 - name: install calico
   ansible.windows.win_powershell:
     script: |
-      C:\install-calico-windows.ps1 -KubeVersion 1.25.3 -ServiceCidr 10.42.0.0/16 -DNSServerIPs 10.42.0.10
+      C:\install-calico-windows.ps1 -KubeVersion {{ kube_version }} -ServiceCidr {{ service_cidr }} -DNSServerIPs {{ dns_server_ip }}
       C:\CalicoWindows\kubernetes\install-kube-services.ps1
   async: 300
   poll: 10

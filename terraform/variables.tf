@@ -3,8 +3,8 @@ variable "prefix" {
     default     = "rke2-lab"
     description = "prefix for azure resources including RG"
     validation {
-        condition     = length(var.prefix) < 11
-        error_message = "Prefix must be smaller than 11"
+        condition     = length(var.prefix) < 10
+        error_message = "Prefix must be smaller than 10"
     }
 }
 

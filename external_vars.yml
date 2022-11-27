@@ -1,0 +1,5 @@
+---
+domain_name: "ravid.lab"
+safe_mode_password: "BadSecret12345!"
+admin_username: "domainadmin"
+admin_password: "BadSecret12345!"
