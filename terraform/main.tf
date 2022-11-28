@@ -48,6 +48,18 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  security_rule {
+    name                       = "Allow WinRM only for local ip"
+    priority                   = "1002"
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "TCP"
+    source_port_range          = "*"
+    destination_port_range     = "5985"
+    source_address_prefix      = "${local.outgoing_ip}/32"
+    destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "dc_assoc" {
@@ -65,8 +77,11 @@ module "dc" {
   subnet_id      = azurerm_subnet.internal.id
   private_ip     = cidrhost(azurerm_subnet.internal.address_prefixes[0], 10)
   admin_username = var.domain_admin_username
-  admin_password = var.domain_admin_password
+  admin_password = var.admin_password
   is_windows     = true
+  tags = {
+    "type" = "dc"
+  }
 }
 
 module "win_nodes" {
@@ -80,8 +95,11 @@ module "win_nodes" {
   subnet_id      = azurerm_subnet.internal.id
   private_ip     = cidrhost(azurerm_subnet.internal.address_prefixes[0], 100 + count.index)
   admin_username = var.local_admin_username
-  admin_password = var.local_admin_password
+  admin_password = var.admin_password
   is_windows     = true
+  tags = {
+    "type" = "win_worker"
+  }
 }
 
 module "master_nodes" {
@@ -95,13 +113,16 @@ module "master_nodes" {
   subnet_id      = azurerm_subnet.internal.id
   private_ip     = cidrhost(azurerm_subnet.internal.address_prefixes[0], 20 + count.index)
   admin_username = var.local_admin_username
-  admin_password = var.local_admin_password
+  admin_password = var.admin_password
   is_windows     = false
   source_image   = {
         "publisher" = "canonical"
         "offer"     = "0001-com-ubuntu-server-focal"
         "sku"       = "20_04-lts"
         "version"   = "latest"
+  }
+  tags = {
+    "type" = "master"
   }
 }
 
@@ -116,12 +137,39 @@ module "lin_nodes" {
   subnet_id      = azurerm_subnet.internal.id
   private_ip     = cidrhost(azurerm_subnet.internal.address_prefixes[0], 200 + count.index)
   admin_username = var.local_admin_username
-  admin_password = var.local_admin_password
+  admin_password = var.admin_password
   is_windows     = false
   source_image   = {
         "publisher" = "canonical"
         "offer"     = "0001-com-ubuntu-server-focal"
         "sku"       = "20_04-lts"
         "version"   = "latest"
+  }
+  tags = {
+    "type" = "linux_worker"
+  }
+}
+
+resource "null_resource" "playbook" {
+  depends_on = [
+    module.dc,
+    module.win_nodes
+  ]
+
+  provisioner "local-exec" {
+    command = "sed -i s/#CHANGETHIS/${var.domain_name}/g; echo ${var.admin_password} > .secret"
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+    sed -i s/USERNAMEREPLACE/${var.local_admin_username}/g ${local.repo_path}/labspin/groupvars/win_workers.yml;
+    sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/groupvars/win_workers.yml;
+    sed -i s/USERNAMEREPLACE/${var.domain_admin_username}/g ${local.repo_path}/labspin/groupvars/dcs.yml"
+    sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/groupvars/dcs.yml;
+    EOT
+  }
+
+  provisioner "local-exec" {
+    command = "ADMIN_PASSWORD=$(cat .secret); ansible-playbook ${local.repo_path}/labspin/domain_playbook.yaml --inventory=${local.repo_path}/labspin/inventory_azure_rm.yml -e admin_username=${var.domain_admin_username} -e domain_name=${var.domain_name}"
   }
 }

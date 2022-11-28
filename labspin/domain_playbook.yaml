@@ -1,8 +1,11 @@
 ---
 - name: create domain
   hosts: dcs
-  vars_files:
-    - ./external_vars.yml
+  vars:
+    admin_username: "{{ admin_username }}"
+    admin_password: "{{ ansible_winrm_password }}"
+    safe_mode_password: "{{ ansible_winrm_password }}"
+    domain_name: "{{ domain_name }}"
 
   tasks:
   - name: create domain
@@ -37,9 +40,12 @@
       type: dword
 
 - name: join nodes to domain
-  hosts: windows
-  vars_files:
-    - ./external_vars.yml
+  hosts: win_workers
+  vars:
+    admin_username: "{{ admin_username }}"
+    admin_password: "{{ ansible_winrm_password }}"
+    safe_mode_password: "{{ ansible_winrm_password }}"
+    domain_name: "{{ domain_name }}"
 
   tasks:
   - name: Set DC as DNS

@@ -8,6 +8,10 @@ variable "prefix" {
     }
 }
 
+variable "domain_name" {
+    type = string
+}
+
 variable "location" {
     type        = string
     default     = "West Europe"
@@ -66,17 +70,12 @@ variable "domain_admin_username" {
     default = "domainadmin"
 }
 
-variable "domain_admin_password" {
-    type      = string
-    sensitive = true
-}
-
 variable "local_admin_username" {
     type    = string
     default = "localadmin"
 }
 
-variable "local_admin_password" {
+variable "admin_password" {
     type      = string
     sensitive = true
 }

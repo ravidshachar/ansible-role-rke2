@@ -1,0 +1,7 @@
+plugin: azure.azcollection.azure_rm
+auth_source: cli
+include_vm_resource_groups:
+  - #CHANGETHIS
+conditional_groups:
+  dcs: tags.type == 'dc'
+  win_workers: tags.type == 'win_worker'
