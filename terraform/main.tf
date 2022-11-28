@@ -157,20 +157,20 @@ resource "null_resource" "playbook" {
   ]
 
   provisioner "local-exec" {
-    command = "sed -i s/#CHANGETHIS/${var.domain_name}/g ${local.repo_path}/labspin/inventory_azure_rm.yml"
+    command = "sed -i s/#CHANGETHIS/${var.prefix}-rg/g ${local.repo_path}/labspin/inventory_azure_rm.yml"
   }
 
   provisioner "local-exec" {
     command = <<-EOT
     echo ${var.admin_password} > .secret; ADMIN_PASSWORD=$(cat .secret);
-    sed -i s/USERNAMEREPLACE/${var.local_admin_username}/g ${local.repo_path}/labspin/groupvars/win_workers.yml;
-    sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/groupvars/win_workers.yml;
-    sed -i s/USERNAMEREPLACE/${var.domain_admin_username}/g ${local.repo_path}/labspin/groupvars/dcs.yml;
-    sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/groupvars/dcs.yml;
+    sed -i s/USERNAMEREPLACE/${var.local_admin_username}/g ${local.repo_path}/labspin/group_vars/win_workers.yml;
+    sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/group_vars/win_workers.yml;
+    sed -i s/USERNAMEREPLACE/${var.domain_admin_username}/g ${local.repo_path}/labspin/group_vars/dcs.yml;
+    sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/group_vars/dcs.yml;
     EOT
   }
 
   provisioner "local-exec" {
-    command = "ADMIN_PASSWORD=$(cat .secret); ansible-playbook ${local.repo_path}/labspin/domain_playbook.yaml --inventory=${local.repo_path}/labspin/inventory_azure_rm.yml -e admin_username=${var.domain_admin_username} -e domain_name=${var.domain_name}"
+    command = "ADMIN_PASSWORD=$(cat .secret); ansible-playbook ${local.repo_path}/labspin/domain_playbook.yaml --inventory=${local.repo_path}/labspin/inventory_azure_rm.yml -e admin_username=${var.domain_admin_username} -e domain_name=${var.domain_name} -e dc_ip=${cidrhost(azurerm_subnet.internal.address_prefixes[0], 10)}"
   }
 }

@@ -46,12 +46,13 @@
     admin_password: "{{ ansible_winrm_password }}"
     safe_mode_password: "{{ ansible_winrm_password }}"
     domain_name: "{{ domain_name }}"
+    dc_ip: "{{ dc_ip }}"
 
   tasks:
   - name: Set DC as DNS
     win_dns_client:
       adapter_names: "*"
-      ipv4_addresses: "{{ hostvars[groups['dcs'].0]['ansible_default_ipv4']['address'] }}"
+      ipv4_addresses: "{{ dc_ip }}"
 
   - name: Join workstation to domain
     win_domain_membership:
