@@ -165,7 +165,7 @@ resource "null_resource" "playbook" {
     ADMIN_PASSWORD=$(cat .secret);
     sed -i s/USERNAMEREPLACE/${var.local_admin_username}/g ${local.repo_path}/labspin/groupvars/win_workers.yml;
     sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/groupvars/win_workers.yml;
-    sed -i s/USERNAMEREPLACE/${var.domain_admin_username}/g ${local.repo_path}/labspin/groupvars/dcs.yml";
+    sed -i s/USERNAMEREPLACE/${var.domain_admin_username}/g ${local.repo_path}/labspin/groupvars/dcs.yml;
     sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/groupvars/dcs.yml;
     EOT
   }
