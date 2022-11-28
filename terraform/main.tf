@@ -157,12 +157,12 @@ resource "null_resource" "playbook" {
   ]
 
   provisioner "local-exec" {
-    command = "sed -i s/#CHANGETHIS/${var.domain_name}/g; echo ${var.admin_password} > .secret"
+    command = "sed -i s/#CHANGETHIS/${var.domain_name}/g ${local.repo_path}/labspin/inventory_azure_rm.yml"
   }
 
   provisioner "local-exec" {
     command = <<-EOT
-    ADMIN_PASSWORD=$(cat .secret);
+    echo ${var.admin_password} > .secret; ADMIN_PASSWORD=$(cat .secret);
     sed -i s/USERNAMEREPLACE/${var.local_admin_username}/g ${local.repo_path}/labspin/groupvars/win_workers.yml;
     sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/groupvars/win_workers.yml;
     sed -i s/USERNAMEREPLACE/${var.domain_admin_username}/g ${local.repo_path}/labspin/groupvars/dcs.yml;
