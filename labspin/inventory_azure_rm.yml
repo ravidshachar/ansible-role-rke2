@@ -4,4 +4,11 @@ include_vm_resource_groups:
   - #CHANGETHIS
 conditional_groups:
   dcs: tags.type == 'dc'
-  win_workers: tags.type == 'win_worker'
+  windows: tags.type == 'win_worker'
+  masters: tags.type == 'master'
+  workers: tags.type == 'linux_worker'
+groups:
+  k8s_cluster:
+    children:
+      masters:
+      workers:

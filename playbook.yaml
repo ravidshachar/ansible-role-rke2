@@ -4,6 +4,8 @@
   hosts: k8s_cluster
   become: yes
   vars:
+    ansible_user: "{{ ansible_user }}"
+    ansible_password: "{{ ansible_password }}"
     rke2_cni: calico
     rke2_token: defaultSecret12345
     rke2_ha_mode: true
@@ -15,5 +17,7 @@
   hosts: windows
   vars:
     rke2_token: defaultSecret12345
+    ansible_user: "{{ admin_user }}"
+    ansible_winrm_password: "{{ ansible_password }}"
   roles:
     - role: win.rke2

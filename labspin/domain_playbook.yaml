@@ -42,7 +42,7 @@
       type: dword
 
 - name: join nodes to domain
-  hosts: win_workers
+  hosts: windows
   vars:
     ansible_user: "{{ local_username }}"
     ansible_winrm_password: "{{ ansible_winrm_password }}"

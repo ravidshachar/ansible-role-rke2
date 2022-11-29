@@ -160,17 +160,11 @@ resource "null_resource" "playbook" {
     command = "sed -i s/#CHANGETHIS/${var.prefix}-rg/g ${local.repo_path}/labspin/inventory_azure_rm.yml; echo ${var.admin_password} > .secret;"
   }
 
-  #provisioner "local-exec" {
-  #  command = <<-EOT
-  #  echo ${var.admin_password} > .secret; ADMIN_PASSWORD=$(cat .secret);
-  #  sed -i s/USERNAMEREPLACE/${var.local_admin_username}/g ${local.repo_path}/labspin/group_vars/win_workers.yml;
-  #  sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/group_vars/win_workers.yml;
-  #  sed -i s/USERNAMEREPLACE/${var.domain_admin_username}/g ${local.repo_path}/labspin/group_vars/dcs.yml;
-  #  sed -i s/PASSWORDREPLACE/$ADMIN_PASSWORD/g ${local.repo_path}/labspin/group_vars/dcs.yml;
-  #  EOT
-  #}
-
   provisioner "local-exec" {
     command = "ADMIN_PASSWORD=$(cat .secret); ansible-playbook ${local.repo_path}/labspin/domain_playbook.yaml --inventory=${local.repo_path}/labspin/inventory_azure_rm.yml -e admin_username=${var.domain_admin_username} -e local_username=${var.local_admin_username} -e ansible_winrm_password=$ADMIN_PASSWORD -e domain_name=${var.domain_name} -e dc_ip=${cidrhost(azurerm_subnet.internal.address_prefixes[0], 10)}"
+  }
+
+  provisioner "local-exec" {
+    command = "ADMIN_PASSWORD=$(cat .secret); ansible-playbook ${local.repo_path}/playbook.yaml --inventory ${local.repo_path}/labspin/inventory_azure_rm.yml -e ansible_user=${var.local_admin_username} -e admin_user=${var.domain_admin_username}@${var.domain_name} -e ansible_password=$ADMIN_PASSWORD"
   }
 }
