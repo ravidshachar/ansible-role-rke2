@@ -6,6 +6,8 @@
   vars:
     rke2_cni: calico
     rke2_token: defaultSecret12345
+    rke2_ha_mode: true
+    # rke2_api_ip: 
   roles:
     - role: lablabs.rke2
 

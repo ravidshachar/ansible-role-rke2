@@ -1,11 +1,19 @@
 [masters]
-rke2-auto-cp01 ansible_connection=local rke2_type=server
+rke2-lab-cp01 ansible_connection=local
+rke2-lab-cp02
+rke2-lab-cp03
+
+[masters:vars]
+ansible_user=localadmin
+ansible_password=<password>
+rke2_type=server
 
 [workers]
-rke2-auto-lin01 rke2_type=agent
+rke2-lab-lin01 rke2_type=agent
 
 [windows]
-rke2-auto-win01
+rke2-lab-win01
+rke2-lab-win02
 
 [windows:vars]
 ansible_connection=winrm

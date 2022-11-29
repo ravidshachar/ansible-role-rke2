@@ -2,6 +2,8 @@
 - name: create domain
   hosts: dcs
   vars:
+    ansible_user: "{{ admin_username }}"
+    ansible_winrm_password: "{{ ansible_winrm_password }}"
     admin_username: "{{ admin_username }}"
     admin_password: "{{ ansible_winrm_password }}"
     safe_mode_password: "{{ ansible_winrm_password }}"
@@ -42,6 +44,8 @@
 - name: join nodes to domain
   hosts: win_workers
   vars:
+    ansible_user: "{{ local_username }}"
+    ansible_winrm_password: "{{ ansible_winrm_password }}"
     admin_username: "{{ admin_username }}"
     admin_password: "{{ ansible_winrm_password }}"
     safe_mode_password: "{{ ansible_winrm_password }}"
