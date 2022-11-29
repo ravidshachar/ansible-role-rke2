@@ -157,7 +157,7 @@ resource "null_resource" "playbook" {
   ]
 
   provisioner "local-exec" {
-    command = "sed -i s/#CHANGETHIS/${var.prefix}-rg/g ${local.repo_path}/labspin/inventory_azure_rm.yml"
+    command = "sed -i s/#CHANGETHIS/${var.prefix}-rg/g ${local.repo_path}/labspin/inventory_azure_rm.yml; echo ${var.admin_password} > .secret;"
   }
 
   #provisioner "local-exec" {

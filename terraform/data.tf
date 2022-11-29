@@ -3,6 +3,6 @@ data "http" "outgoing_ip" {
 }
 
 locals {
-    outgoing_ip = chomp(data.http.outgoing_ip.body)
+    outgoing_ip = chomp(data.http.outgoing_ip.response_body)
     repo_path   = abspath(format("%s/..", path.module))
 }
