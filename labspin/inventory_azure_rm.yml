@@ -1,10 +1,12 @@
 plugin: azure.azcollection.azure_rm
 auth_source: cli
 include_vm_resource_groups:
-  - #CHANGETHIS
+  - ravid-rg
 conditional_groups:
   dcs: tags.type == 'dc'
   windows: tags.type == 'win_worker'
   masters: tags.type == 'master'
   workers: tags.type == 'linux_worker'
   k8s_cluster: tags.type == 'master' or tags.type == 'linux_worker'
+plain_host_names: true
+strict: true

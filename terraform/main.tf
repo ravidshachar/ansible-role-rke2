@@ -30,7 +30,7 @@ resource "azurerm_network_security_group" "nsg" {
     priority                   = "1000"
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "TCP"
+    protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "3389"
     source_address_prefix      = "*"
@@ -42,7 +42,7 @@ resource "azurerm_network_security_group" "nsg" {
     priority                   = "1001"
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "TCP"
+    protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
     source_address_prefix      = "*"
@@ -54,7 +54,7 @@ resource "azurerm_network_security_group" "nsg" {
     priority                   = "1002"
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "TCP"
+    protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "5985"
     source_address_prefix      = "${local.outgoing_ip}/32"
@@ -157,6 +157,10 @@ resource "null_resource" "playbook" {
   ]
 
   provisioner "local-exec" {
+    command = "sleep 10" # wait for vm creation to complete
+  }
+
+  provisioner "local-exec" {
     command = "sed -i s/#CHANGETHIS/${var.prefix}-rg/g ${local.repo_path}/labspin/inventory_azure_rm.yml; echo ${var.admin_password} > .secret;"
   }
 
@@ -165,6 +169,6 @@ resource "null_resource" "playbook" {
   }
 
   provisioner "local-exec" {
-    command = "ADMIN_PASSWORD=$(cat .secret); ansible-playbook ${local.repo_path}/playbook.yaml --inventory ${local.repo_path}/labspin/inventory_azure_rm.yml -e ansible_user=${var.local_admin_username} -e admin_user=${var.domain_admin_username}@${var.domain_name} -e ansible_password=$ADMIN_PASSWORD"
+    command = "ADMIN_PASSWORD=$(cat .secret); ansible-playbook ${local.repo_path}/playbook.yaml --ssh-common-args='-o StrictHostKeyChecking=no' --inventory ${local.repo_path}/labspin/inventory_azure_rm.yml -e ansible_user=${var.local_admin_username} -e admin_user=${var.domain_admin_username}@${var.domain_name} -e ansible_password=$ADMIN_PASSWORD -e api_lb_ip=${var.lb_ip}"
   }
 }

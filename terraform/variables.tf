@@ -26,7 +26,7 @@ variable "vnet_address_space" {
 
 variable "dc_size" {
     type    = string
-    default = "Standard_A2_v2"
+    default = "Standard_A4_v2"
 }
 
 variable "win_size" {
@@ -78,4 +78,10 @@ variable "local_admin_username" {
 variable "admin_password" {
     type      = string
     sensitive = true
+}
+
+variable "lb_ip" {
+    type        = string
+    default     = "10.0.0.4"
+    description = "Private ip for kube-api load balancer"
 }

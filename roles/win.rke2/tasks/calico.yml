@@ -5,7 +5,8 @@
 
 - name: copy kubeconfig
   win_copy:
-    src: /etc/rancher/rke2/rke2.yaml
+    #src: /etc/rancher/rke2/rke2.yaml
+    src: /tmp/rke2.yaml
     dest: C:\k\config
 
 - name: replace ip in kubeconfig

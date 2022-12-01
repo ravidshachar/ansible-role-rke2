@@ -27,7 +27,6 @@
       domain_admin_password: "{{ admin_password }}"
       safe_mode_password: "{{ safe_mode_password }}"
       state: domain_controller
-      log_path: C:\Windows\Temp\dc_log.txt
     register: dc_promotion
 
   - name: reboot if neccassary
