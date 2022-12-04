@@ -6,7 +6,7 @@ You should install: `terraform`, `sshpass` (for using ssh with passwords), `pyth
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 install required python modules:
 
-    python3 -m pip install pywinrm jinja2 MarkupSafe ansible
+    python3 -m pip install pywinrm jinja2 MarkupSafe ansible azure-cli
 The following ansible galaxy collections:
 
     ansible-galaxy collection install ansible.windows azure.azcollection
@@ -24,3 +24,5 @@ finally run terraform init & apply:
 
     terraform init
     terraform apply
+
+when running newer python versions (3.10) you might get an ntlm error because of md4 being unsupported, follow instructions on [this page](https://stackoverflow.com/questions/69938570/md4-hashlib-support-in-python-3-8)

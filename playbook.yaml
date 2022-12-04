@@ -11,6 +11,18 @@
     rke2_ha_mode: true
     rke2_api_ip: "{{ api_lb_ip }}"
     rke2_download_kubeconf: true
+    rke2_server_taint: true
+    # airgap stuff
+    #rke2_airgap_mode: true
+    #rke2_airgap_implementation: copy
+    #rke2_install_bash_url: https://get.rke2.io
+    #rke2_artifact_url: https://github.com/rancher/rke2/releases/download/
+    #rke2_artifact:
+    #  - sha256sum-{{ rke2_architecture }}.txt
+    #  - rke2.linux-{{ rke2_architecture }}.tar.gz
+    #  - rke2-images.linux-{{ rke2_architecture }}.tar.zst
+    #rke2_airgap_copy_additional_tarballs:
+    #  - rke2-images-calico.linux-{{ rke2_architecture }}.tar.gz
   roles:
     - role: lablabs.rke2
 
@@ -20,5 +32,6 @@
     rke2_token: defaultSecret12345
     ansible_user: "{{ admin_user }}"
     ansible_winrm_password: "{{ ansible_password }}"
+    #rke2_airgap_mode: true
   roles:
     - role: win.rke2

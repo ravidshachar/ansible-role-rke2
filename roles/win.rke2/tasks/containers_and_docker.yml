@@ -7,12 +7,14 @@
   win_reboot:
   when: win_feature.reboot_required
 
-- name: download docker
-  win_get_url:
-    url: https://raw.githubusercontent.com/microsoft/Windows-Containers/Main/helpful_tools/Install-DockerCE/install-docker-ce.ps1
-    dest: .\install-docker-ce.ps1
-
-- name: install docker
-  ansible.windows.win_powershell:
-    script: |
-      .\install-docker-ce.ps1
+#- name: download docker
+#  win_get_url:
+#    url: https://raw.githubusercontent.com/microsoft/Windows-Containers/Main/helpful_tools/Install-DockerCE/install-docker-ce.ps1
+#    dest: .\install-docker-ce.ps1
+#  when: not rke2_airgap_mode
+#
+#- name: install docker
+#  ansible.windows.win_powershell:
+#    script: |
+#      .\install-docker-ce.ps1
+#  when: not rke2_airgap_mode
