@@ -39,4 +39,5 @@ wget -P $DOWNLOAD_PATH https://github.com/rancher/rke2/releases/download/${RKE2_
 wget -P $DOWNLOAD_PATH https://github.com/rancher/rke2/releases/download/${RKE2_VERSION}/rke2-windows-ltsc2022-${RKE2_ARCH}-images.tar.gz
 wget -P $DOWNLOAD_PATH https://github.com/rancher/rke2/releases/download/${RKE2_VERSION}/rke2.windows-${RKE2_ARCH}.tar.gz 
 wget -O $DOWNLOAD_PATH/install.ps1 https://raw.githubusercontent.com/rancher/rke2/master/install.ps1
-wget -O $DOWNLOAD_PATH/install.sh https://get.rke2.io
+wget -O $DOWNLOAD_PATH/rke2.sh https://get.rke2.io
+git clone https://github.com/ravidshachar/ansible-role-rke2 $DOWNLOAD_PATH
