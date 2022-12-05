@@ -11,3 +11,6 @@
 
 - name: download rke2 for windows and install agent
   ansible.builtin.include_tasks: rke2.yml
+
+- name: summary
+  ansible.builtin.include_tasks: summary.yml

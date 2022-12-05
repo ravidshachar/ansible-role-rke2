@@ -1,0 +1,34 @@
+- name: copy kubeconfig
+  win_copy:
+    #src: /etc/rancher/rke2/rke2.yaml
+    src: /tmp/rke2.yaml
+    dest: C:\etc\rancher\rke2\rke2.yaml
+
+- name: Wait for windows nodes to be ready
+  ansible.windows.win_powershell: 
+    script: |
+      (C:/var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get nodes --selector=kubernetes.io/os==windows | where-object {$_ -like "* Ready*"} | measure).Count
+  changed_when: false
+  register: all_ready_nodes
+  until:
+    "groups[rke2_windows_group_name] | length == all_ready_nodes.stdout | int"
+  retries: 100
+  delay: 15
+  delegate_to: "{{ groups[rke2_windows_group_name].0 }}"
+  run_once: true
+
+- block:
+    - name: Prepare summary
+      ansible.windows.win_powershell:
+        script: |
+          C:/var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get nodes -o wide --show-labels
+      changed_when: false
+      run_once: true
+      retries: 5
+      register: nodes_summary
+
+    - name: K8s nodes state
+      ansible.builtin.debug:
+        var: nodes_summary.stdout_lines
+      run_once: true
+  when: inventory_hostname == groups[rke2_windows_group_name].0

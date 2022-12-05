@@ -1,4 +1,6 @@
 ---
+rke2_windows_group_name: "windows"
+
 rke2_token: "defaultSecret12345"
 
 rke2_architecture: amd64
