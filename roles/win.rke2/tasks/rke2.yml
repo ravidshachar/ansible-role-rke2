@@ -16,6 +16,19 @@
     dest: .\install.ps1
   when: not rke2_airgap_mode
 
+- name: Check if rke2 service is installed
+  win_service:
+    name: rke2
+  register: rke2_service
+
+- name: Check RKE2 version
+  ansible.windows.win_powershell:
+    script: |
+      ((cmd.exe /c C:\usr\local\bin\rke2 --version | where-object {$_ -like "*rke2 version*"}) -Split " ")[2]
+  changed_when: false
+  register: installed_rke2_version
+  when: rke2_service is defined
+
 - name: copy airgap artifacts
   block:
   - name: create airgap directory
@@ -47,12 +60,14 @@
   ansible.windows.win_powershell:
     script: |
       .\install.ps1 -Version '{{ rke2_version }}' -Type agent {% if rke2_airgap_mode %}-ArtifactPath '{{ rke2_tarball_images_path }}'{% endif %}
+  when: rke2_version is not defined or rke2_version != ( installed_rke2_version.host_out | default({}))
 
 - name: install agent
   ansible.windows.win_powershell:
     script: |
       rke2.exe agent service --add
   register: script_return
+  when: rke2_version is not defined or rke2_version != ( installed_rke2_version.host_out | default({}))
 
 - name: start rke2 service
   win_service:

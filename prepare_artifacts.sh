@@ -37,6 +37,8 @@ done
 [ "$RKE2_ARCH" ] || RKE2_ARCH="amd64"
 [ "$DOWNLOAD_PATH" ] || DOWNLOAD_PATH="/tmp/rke2_artifacts"
 
+DOWNLOAD_PATH="${DOWNLOAD_PATH}_${RKE2_VERSION}"
+
 mkdir -p $DOWNLOAD_PATH
 mkdir -p $DOWNLOAD_PATH/rke2
 mkdir -p $DOWNLOAD_PATH/rancher
@@ -55,18 +57,18 @@ wget -O $DOWNLOAD_PATH/rke2/rke2.sh https://get.rke2.io
 [ "$CLONE" ] && git clone https://github.com/ravidshachar/ansible-role-rke2 $DOWNLOAD_PATH/rke2-ansible
 
 # Rancher artifacts
-wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-images.txt
-wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-save-images.sh
-wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-load-images.sh
+#wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-images.txt
+#wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-save-images.sh
+#wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-load-images.sh
 
 cd $DOWNLOAD_PATH/rancher
-chmod +x ./rancher-save-images.sh
-./rancher-save-images.sh --image-list ./rancher-images.txt
+#chmod +x ./rancher-save-images.sh
+#./rancher-save-images.sh --image-list ./rancher-images.txt
 
 # Rancher windows artifacts
-wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-windows-images.txt
-wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-save-images.ps1
-wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-load-images.ps1	
+#wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-windows-images.txt
+#wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-save-images.ps1
+#wget -P $DOWNLOAD_PATH/rancher https://github.com/rancher/rancher/releases/download/v${RANCHER_VERSION}/rancher-load-images.ps1	
 
 # Rancher helm chart
 helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
