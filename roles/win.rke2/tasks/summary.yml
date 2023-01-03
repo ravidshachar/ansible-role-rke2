@@ -11,7 +11,7 @@
   changed_when: false
   register: all_ready_nodes
   until:
-    "groups[rke2_windows_group_name] | length == all_ready_nodes.stdout | int"
+    "groups[rke2_windows_group_name] | length == all_ready_nodes.output[0] | int"
   retries: 100
   delay: 15
   delegate_to: "{{ groups[rke2_windows_group_name].0 }}"
@@ -29,6 +29,6 @@
 
     - name: K8s nodes state
       ansible.builtin.debug:
-        var: nodes_summary.stdout_lines
+        var: nodes_summary.output
       run_once: true
   when: inventory_hostname == groups[rke2_windows_group_name].0
