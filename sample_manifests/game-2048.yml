@@ -3,6 +3,32 @@ kind: Namespace
 metadata:
   name: game-2048
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx-internal
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx-internal
+  tls:
+    - hosts:
+        - game2048.ravid.lab
+      secretName: internal-tls
+  rules:
+  - host: "game2048.ravid.lab"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: game-2048
+            port:
+              number: 80
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

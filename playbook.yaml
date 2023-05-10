@@ -4,15 +4,17 @@
   hosts: k8s_cluster
   become: yes
   vars:
-    ansible_user: "{{ ansible_user }}"
-    ansible_password: "{{ ansible_password }}"
+    #ansible_user: "{{ ansible_user }}"
+    #ansible_password: "{{ ansible_password }}"
     rke2_cni: calico
+    rke2_version: v1.25.9+rke2r1
     rke2_token: defaultSecret12345
     rke2_ha_mode: true
-    rke2_api_ip: "{{ api_lb_ip }}"
+    rke2_api_ip: 10.0.0.4
+    #rke2_ha_mode_keepalived: false
+    #rke2_ha_mode_kubevip: true
     rke2_download_kubeconf: true
     rke2_server_taint: true
-    rke2_version: v1.24.8+rke2r1
     # airgap stuff
     #rke2_airgap_mode: true
     #rke2_airgap_implementation: copy
@@ -36,7 +38,7 @@
     rke2_token: defaultSecret12345
     ansible_user: "{{ admin_user }}"
     ansible_winrm_password: "{{ ansible_password }}"
-    rke2_version: v1.24.8+rke2r1
+    rke2_version: v1.25.9+rke2r1
     #rke2_airgap_mode: true
   roles:
     - role: win.rke2

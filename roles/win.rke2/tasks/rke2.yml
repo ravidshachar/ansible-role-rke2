@@ -29,6 +29,18 @@
   register: installed_rke2_version
   when: rke2_service is defined
 
+- name: print selected rke2 version
+  ansible.builtin.debug:
+    var: rke2_version
+
+- name: print installed rke2 version
+  ansible.builtin.debug:
+    var: installed_rke2_version.output | default({})
+
+- name: print rke2 installed version different
+  ansible.builtin.debug:
+    var: rke2_version not in (installed_rke2_version.output | default({}))
+
 - name: copy airgap artifacts
   block:
   - name: create airgap directory
@@ -60,14 +72,14 @@
   ansible.windows.win_powershell:
     script: |
       .\install.ps1 -Version '{{ rke2_version }}' -Type agent {% if rke2_airgap_mode %}-ArtifactPath '{{ rke2_tarball_images_path }}'{% endif %}
-  when: rke2_version is not defined or rke2_version != ( installed_rke2_version.host_out | default({}))
+  when: installed_rke2_version is not defined or rke2_version not in ( installed_rke2_version.output | default({}))
 
 - name: install agent
   ansible.windows.win_powershell:
     script: |
       rke2.exe agent service --add
   register: script_return
-  when: rke2_version is not defined or rke2_version != ( installed_rke2_version.host_out | default({}))
+  when: installed_rke2_version is not defined or rke2_version not in ( installed_rke2_version.output | default({}))
 
 - name: start rke2 service
   win_service:
