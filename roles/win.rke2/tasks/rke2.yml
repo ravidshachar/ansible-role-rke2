@@ -62,6 +62,18 @@
       dest: .\install.ps1
   when: rke2_airgap_mode
 
+- name: stop service if upgrade is needed
+  win_service:
+    name: rke2
+    state: stopped
+  when: installed_rke2_version is not defined or rke2_version not in ( installed_rke2_version.output | default({}))
+
+- name: clear /usr/local
+  win_file:
+    path: C:\usr\local
+    state: absent
+  when: installed_rke2_version is not defined or rke2_version not in ( installed_rke2_version.output | default({}))
+
 - name: add bin to path
   win_path:
     elements:
