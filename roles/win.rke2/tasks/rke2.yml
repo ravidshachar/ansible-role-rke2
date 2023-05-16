@@ -8,6 +8,12 @@
     content: |
       server: https://{{ hostvars[groups['masters'].0]['ansible_default_ipv4']['address'] }}:9345
       token: {{ rke2_token }}
+      {% if (node_taints is defined and node_taints|length > 0) %}
+      node-taint:
+      {% for taint in node_taints %}
+        - {{ taint }}
+      {% endfor %}
+      {% endif %}
     dest: C:\etc\rancher\rke2\config.yaml
 
 - name: download rke2 install script
@@ -43,23 +49,23 @@
 
 - name: copy airgap artifacts
   block:
-  - name: create airgap directory
-    win_file:
-      path: "{{ rke2_tarball_images_path }}"
-      state: directory
-    when: rke2_airgap_mode
-  - name: copy rke2 windows artifacts
-    win_copy:
-      src: "{{ rke2_airgap_copy_sourcepath }}/{{ item }}"
-      dest: "{{ rke2_tarball_images_path }}/{{ item }}"
-    with_items:
-    - "rke2.windows-{{ rke2_architecture }}.tar.gz"
-    - "rke2-windows-ltsc2022-{{ rke2_architecture }}-images.tar.gz"
-    - "sha256sum-{{ rke2_architecture }}.txt"
-  - name: copy rke2 powershell install script
-    win_copy:
-      src: "{{ rke2_airgap_copy_sourcepath }}/install.ps1"
-      dest: .\install.ps1
+    - name: create airgap directory
+      win_file:
+        path: "{{ rke2_tarball_images_path }}"
+        state: directory
+      when: rke2_airgap_mode
+    - name: copy rke2 windows artifacts
+      win_copy:
+        src: "{{ rke2_airgap_copy_sourcepath }}/{{ item }}"
+        dest: "{{ rke2_tarball_images_path }}/{{ item }}"
+      with_items:
+        - "rke2.windows-{{ rke2_architecture }}.tar.gz"
+        - "rke2-windows-ltsc2022-{{ rke2_architecture }}-images.tar.gz"
+        - "sha256sum-{{ rke2_architecture }}.txt"
+    - name: copy rke2 powershell install script
+      win_copy:
+        src: "{{ rke2_airgap_copy_sourcepath }}/install.ps1"
+        dest: .\install.ps1
   when: rke2_airgap_mode
 
 - name: stop service if upgrade is needed
@@ -77,8 +83,8 @@
 - name: add bin to path
   win_path:
     elements:
-    - 'c:\var\lib\rancher\rke2\bin'
-    - 'c:\usr\local\bin'
+      - 'c:\var\lib\rancher\rke2\bin'
+      - 'c:\usr\local\bin'
 
 - name: Run install script
   ansible.windows.win_powershell:
